@@ -1,4 +1,4 @@
-import { useSudoku } from "./sudokuContext";
+import { useSudoku } from "./SudokuContext";
 
 export default function Cell({ r, c, value, given, error, extraClass = "" }) {
   const { state, dispatch } = useSudoku();

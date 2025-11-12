@@ -1,4 +1,4 @@
-import { useSudoku } from "../sudoku/sudokuContext";
+import { useSudoku } from "../sudoku/SudokuContext";
 
 
 export default function WinBanner() {

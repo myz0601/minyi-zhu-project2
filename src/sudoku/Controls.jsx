@@ -1,4 +1,4 @@
-import { useSudoku } from "./sudokuContext";
+import { useSudoku } from "./SudokuContext";
 
 export default function Controls() {
   const { state, dispatch } = useSudoku();

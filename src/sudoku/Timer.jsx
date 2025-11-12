@@ -1,4 +1,4 @@
-import { useSudoku } from "./sudokuContext";
+import { useSudoku } from "./SudokuContext";
 
 const fmt = (ms) => {
   const s = Math.floor(ms / 1000);

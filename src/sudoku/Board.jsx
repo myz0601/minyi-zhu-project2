@@ -1,4 +1,4 @@
-import { useSudoku } from "./sudokuContext";
+import { useSudoku } from "./SudokuContext";
 import Cell from "./Cell";
 
 export default function Board() {
