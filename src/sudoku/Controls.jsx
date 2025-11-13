@@ -6,6 +6,7 @@ export default function Controls() {
     <div className="controls">
       <button className="btn" onClick={() => dispatch({ type: "NEW_GAME" })}>New Game</button>
       <button className="btn" onClick={() => dispatch({ type: "RESET" })}>Reset</button>
+      <button className="btn" onClick={() => dispatch({ type: "FIND_HINT" }) } disabled={state.locked}>Hint</button>
     </div>
   );
 }

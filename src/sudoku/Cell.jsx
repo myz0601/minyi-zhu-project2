@@ -1,6 +1,6 @@
 import { useSudoku } from "./SudokuContext";
 
-export default function Cell({ r, c, value, given, error, extraClass = "" }) {
+export default function Cell({ r, c, value, given, error, isHint = false, extraClass = "" }) {
   const { state, dispatch } = useSudoku();
   const base = state.base;
 
@@ -24,6 +24,7 @@ export default function Cell({ r, c, value, given, error, extraClass = "" }) {
     "cell" +
     (given ? " given" : "") +
     (error ? " error" : "") +
+    (isHint ? " hint" : "") +
     extraClass;
 
   return (

@@ -3,7 +3,7 @@ import Cell from "./Cell";
 
 export default function Board() {
   const { state } = useSudoku();
-  const { grid, given, conflicts, base, blockCols, blockRows } = state;
+  const { grid, given, conflicts, base, blockCols, blockRows, hint } = state;
 
   return (
     <div
@@ -23,6 +23,7 @@ export default function Board() {
               value={val}
               given={!!given[r][c]}
               error={conflicts.has(`${r}-${c}`)}
+              isHint={!!(hint && hint.r === r && hint.c === c)}
               extraClass={boxRight + boxBottom}
             />
           );

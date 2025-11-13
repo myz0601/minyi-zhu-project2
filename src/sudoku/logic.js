@@ -6,25 +6,26 @@ function shuffle(arr) {
   }
   return a;
 }
+function doSwap() { return Math.random() < 0.5; }
+function swap(arr, i, j) { const t = arr[i]; arr[i] = arr[j]; arr[j] = t; }
+function deepCopy(g) { return g.map(r => r.slice()); }
 
-function doSwap() { 
-  return Math.random() < 0.5; 
+function getBlockDims(size) {
+  if (size === 6) return { blockRows: 2, blockCols: 3 };
+  // default 9x9
+  return { blockRows: 3, blockCols: 3 };
 }
 
-function swap(arr, i, j) {
-  const t = arr[i]; arr[i] = arr[j]; arr[j] = t;
-}
-
+// build a valid full board
 function fillBoard(size) {
-  const blockWidth = 3;
-  let blockHeight = 3;
-  if (size === 6) blockHeight = 2;
-
+  const { blockRows, blockCols } = getBlockDims(size);
   const board = Array.from({ length: size }, () => Array(size).fill(0));
+
   for (let r = 0; r < size; r++) {
-    const groupIdx = Math.floor(r / blockHeight);
-    const rowInGroup = r % blockHeight;
-    const shift = (rowInGroup * blockWidth + groupIdx) % size;
+    const groupIdx = Math.floor(r / blockRows);
+    const rowInGroup = r % blockRows;
+    // shift by (rowInGroup * blockCols + groupIdx)
+    const shift = (rowInGroup * blockCols + groupIdx) % size;
     for (let c = 0; c < size; c++) board[r][c] = (c + shift) % size + 1;
   }
   return board;
@@ -32,13 +33,13 @@ function fillBoard(size) {
 
 function swapRowsWithinGroup(board) {
   const N = board.length;
-  const rowsInGroup = (N === 6 ? 2 : 3);
-  const numGroup = Math.floor(N / rowsInGroup);
+  const { blockRows } = getBlockDims(N);
+  const numGroup = Math.floor(N / blockRows);
 
   for (let g = 0; g < numGroup; g++) {
-    const s = g * rowsInGroup;
-    for (let i = 0; i < rowsInGroup - 1; i++) {
-      for (let j = i + 1; j < rowsInGroup; j++) {
+    const s = g * blockRows;
+    for (let i = 0; i < blockRows - 1; i++) {
+      for (let j = i + 1; j < blockRows; j++) {
         if (doSwap()) swap(board, s + i, s + j);
       }
     }
@@ -47,21 +48,19 @@ function swapRowsWithinGroup(board) {
 
 function swapColsWithinGroup(board) {
   const N = board.length;
-  const colsInGroup = 3;
-  const numGroup = Math.floor(N / colsInGroup);
+  const { blockCols } = getBlockDims(N);
+  const numGroup = Math.floor(N / blockCols);
 
   for (let g = 0; g < numGroup; g++) {
-    const s = g * colsInGroup;
-    for (let i = 0; i < colsInGroup - 1; i++) {
-      for (let j = i + 1; j < colsInGroup; j++) {
+    const s = g * blockCols;
+    for (let i = 0; i < blockCols - 1; i++) {
+      for (let j = i + 1; j < blockCols; j++) {
         if (!doSwap()) continue;
         const c1 = s + i, c2 = s + j;
         if (c1 >= N || c2 >= N) continue;
         for (let r = 0; r < N; r++) {
           const row = board[r];
-          if (c1 < row.length && c2 < row.length) {
-            const t = row[c1]; row[c1] = row[c2]; row[c2] = t;
-          }
+          const t = row[c1]; row[c1] = row[c2]; row[c2] = t;
         }
       }
     }
@@ -70,32 +69,35 @@ function swapColsWithinGroup(board) {
 
 function swapRowGroups(board) {
   const N = board.length;
-  const rowsInGroup = (N === 6 ? 2 : 3);
-  const numGroup = Math.floor(N / rowsInGroup);
-  
+  const { blockRows } = getBlockDims(N);
+  const numGroup = Math.floor(N / blockRows);
+
   for (let a = 0; a < numGroup; a++) {
     for (let b = a + 1; b < numGroup; b++) {
       if (!doSwap()) continue;
-      const sa = a * rowsInGroup;
-      const sb = b * rowsInGroup;
-      for (let k = 0; k < rowsInGroup; k++) swap(board, sa + k, sb + k);
+      const sa = a * blockRows;
+      const sb = b * blockRows;
+      for (let k = 0; k < blockRows; k++) swap(board, sa + k, sb + k);
     }
   }
 }
 
 function swapColGroups(board) {
   const N = board.length;
-  const colsInGroup = 3;
-  const numGroup = Math.floor(N / colsInGroup);
+  const { blockCols } = getBlockDims(N);
+  const numGroup = Math.floor(N / blockCols);
 
   for (let a = 0; a < numGroup; a++) {
     for (let b = a + 1; b < numGroup; b++) {
       if (!doSwap()) continue;
-      const sa = a * colsInGroup;
-      const sb = b * colsInGroup;
-      for (let k = 0; k < colsInGroup; k++) {
+      const sa = a * blockCols;
+      const sb = b * blockCols;
+      for (let k = 0; k < blockCols; k++) {
         const c1 = sa + k, c2 = sb + k;
-        for (let r = 0; r < N; r++) swap(board[r], c1, c2);
+        for (let r = 0; r < N; r++) {
+          const row = board[r];
+          const t = row[c1]; row[c1] = row[c2]; row[c2] = t;
+        }
       }
     }
   }
@@ -115,31 +117,77 @@ function swapNums(board) {
   }
 }
 
-function deepCopy(g) { return g.map(r => r.slice()); }
+function isSafe(board, r, c, v, br, bc) {
+  const N = board.length;
+  for (let k = 0; k < N; k++) {
+    if (board[r][k] === v) return false;
+    if (board[k][c] === v) return false;
+  }
+  const r0 = Math.floor(r / br) * br, c0 = Math.floor(c / bc) * bc;
+  for (let i = 0; i < br; i++) for (let j = 0; j < bc; j++) {
+    if (board[r0 + i][c0 + j] === v) return false;
+  }
+  return true;
+}
 
+function findEmpty(board) {
+  const N = board.length;
+  for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+    if (board[r][c] == null) return [r, c];
+  }
+  return null;
+}
 
-function removeNums(board, numsLeft) {
+// count solutions; return as soon as >= limit (we use limit=2)
+function countSolutions(board, br, bc, limit = 2) {
+  const pos = findEmpty(board);
+  if (!pos) return 1;
+  const [r, c] = pos;
+  const N = board.length;
+
+  let cnt = 0;
+  for (let v = 1; v <= N; v++) {
+    if (isSafe(board, r, c, v, br, bc)) {
+      board[r][c] = v;
+      cnt += countSolutions(board, br, bc, limit);
+      board[r][c] = null;
+      if (cnt >= limit) return cnt;
+    }
+  }
+  return cnt;
+}
+
+// remove with uniqueness check: try to erase; if multi-solution then revert
+function removeNumsUnique(board, numsLeft, br, bc) {
   const N = board.length;
   const total = N * N;
+  const cells = shuffle(Array.from({ length: total }, (_, k) => [ (k / N) | 0, k % N ]));
 
-  const keep = new Set();
-  while (keep.size < numsLeft) keep.add((Math.random() * total) | 0);
+  let kept = total;
+  for (const [r, c] of cells) {
+    if (kept <= numsLeft) break;
+    const bak = board[r][c];
+    if (bak == null) continue;
 
-  for (let r = 0; r < N; r++) {
-    for (let c = 0; c < N; c++) {
-      const k = r * N + c;
-      if (!keep.has(k)) board[r][c] = null;
+    board[r][c] = null;
+
+    const tmp = deepCopy(board);
+    const sol = countSolutions(tmp, br, bc, 2); // >=2 means NOT unique
+    if (sol !== 1) {
+      // not unique
+      board[r][c] = bak;
+    } else {
+      kept--;
     }
   }
 }
 
-
 export function generateGame(mode) {
   let base, blockRows, blockCols, keep;
   if (mode === "easy") {
-    base = 6; blockRows = 2; blockCols = 3; keep = 18;
+    base = 6;  ({ blockRows, blockCols } = getBlockDims(6));  keep = 18;
   } else {
-    base = 9; blockRows = 3; blockCols = 3; keep = 28 + ((Math.random() * 3) | 0);
+    base = 9;  ({ blockRows, blockCols } = getBlockDims(9));  keep = 28 + ((Math.random() * 3) | 0);
   }
 
   const board = fillBoard(base);
@@ -150,8 +198,9 @@ export function generateGame(mode) {
   swapNums(board);
 
   const solution = deepCopy(board);
-  
-  removeNums(board, keep);
+
+
+  removeNumsUnique(board, keep, blockRows, blockCols);
   const puzzle = board;
 
   return { base, blockRows, blockCols, solution, puzzle };
@@ -168,7 +217,7 @@ export function isComplete(grid) {
 
 export function findConflicts(grid, base, br, bc) {
   const bad = new Set();
-  // row
+  // rows
   for (let r = 0; r < base; r++) {
     const seen = new Map();
     for (let c = 0; c < base; c++) {
@@ -183,7 +232,7 @@ export function findConflicts(grid, base, br, bc) {
       }
     }
   }
-  // column
+  // cols
   for (let c = 0; c < base; c++) {
     const seen = new Map();
     for (let r = 0; r < base; r++) {
@@ -198,13 +247,13 @@ export function findConflicts(grid, base, br, bc) {
       }
     }
   }
-  // subcell
+  // boxes
   for (let bri = 0; bri < base; bri += br) {
     for (let bci = 0; bci < base; bci += bc) {
       const seen = new Map();
-      for (let r = 0; r < br; r++) {
-        for (let c = 0; c < bc; c++) {
-          const rr = bri + r, cc = bci + c;
+      for (let i = 0; i < br; i++) {
+        for (let j = 0; j < bc; j++) {
+          const rr = bri + i, cc = bci + j;
           const v = grid[rr][cc];
           if (v == null) continue;
           const k = `b${bri}-${bci}-${v}`;
@@ -219,4 +268,26 @@ export function findConflicts(grid, base, br, bc) {
     }
   }
   return bad;
+}
+
+
+export function candidatesAt(grid, base, br, bc, r, c) {
+  if (grid[r][c] != null) return [];
+  const out = [];
+  for (let v = 1; v <= base; v++) {
+    if (isSafe(grid, r, c, v, br, bc)) out.push(v);
+  }
+  return out;
+}
+
+// find the first valid cell
+export function findFirst(grid, base, br, bc) {
+  for (let r = 0; r < base; r++) {
+    for (let c = 0; c < base; c++) {
+      if (grid[r][c] != null) continue;
+      const cand = candidatesAt(grid, base, br, bc, r, c);
+      if (cand.length === 1) return { r, c };
+    }
+  }
+  return null;
 }

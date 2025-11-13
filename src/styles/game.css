@@ -3,6 +3,8 @@
   --brand-weak: #d4c8e3;
   --grid-thin: #dde6ea;
   --grid-strong: #7d698e;
+  --hint: #4ec7da;
+  --hint-bg: rgba(36, 194, 234, 0.12);
 }
 
 .page-title {
@@ -108,10 +110,6 @@
 }
 
 .cell-input:focus { outline: none; }
-.cell:focus-within {
-  box-shadow: inset 0 0 0 3px var(--brand);
-  background: #fff;
-}
 
 .cell-text {
   display: block;
@@ -122,12 +120,29 @@
   line-height: var(--cell);
 }
 
-
 .cell.given { background: #f3f0f6; color: #574a66; }
-.cell.error { box-shadow: inset 0 0 0 3px #d5625e; }
 
 .cell.box-right  { border-right-color: var(--grid-strong); border-right-width: 3px; }
 .cell.box-bottom { border-bottom-color: var(--grid-strong); border-bottom-width: 3px; }
+
+.cell:focus-within {
+  box-shadow: inset 0 0 0 3px var(--brand);
+  background: #fff;
+  position: relative;
+  z-index: 2; 
+}
+
+.cell.error {
+  box-shadow: inset 0 0 0 3px #d5625e !important;
+  background: #fff5f5;
+}
+
+.cell.hint {
+  box-shadow: inset 0 0 0 3px var(--hint);
+  background: var(--hint-bg);
+  position: relative;
+  z-index: 2;
+}
 
 
 .controls {
@@ -182,7 +197,7 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .cell:not(.given):hover {
+  .cell:not(.given):not(:focus-within):hover {
     background: #faf9fc;
     box-shadow: inset 0 0 0 2px rgba(125,105,142,.25);
     cursor: text;
