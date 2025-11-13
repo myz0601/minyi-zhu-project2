@@ -64,7 +64,7 @@ export default function RulesPage() {
             <strong>Change anytime / delete:</strong> You can overwrite a value, or clear with Backspace/Delete.
           </li>
           <li>
-            <strong>New Game & Reset:</strong> “New Game” creates a fresh random puzzle; “Reset” restores the original givens.
+            <strong>New Game & Reset & Hint:</strong> “New Game” creates a fresh random puzzle; “Reset” restores the original givens; "Hint" highlights one empty cell that has a single valid candidate.
           </li>
           <li>
             <strong>Timer & Win:</strong> The timer starts when the board loads. When the board is validly complete,
