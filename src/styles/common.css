@@ -2,9 +2,12 @@
 
 html, body { 
   margin: 0; 
-  padding: 0; }
+  padding: 0; 
+}
 
-*, *::before, *::after { box-sizing: border-box; }
+*, *::before, *::after { 
+  box-sizing: border-box; 
+}
 
 .container {
   max-width: 1100px;
@@ -16,7 +19,7 @@ body {
   margin: 0;
   font-family: 'Nunito', sans-serif;
   background-color: #bed8e2;
-  padding-top: 70px;
+  padding-top: 60px;
 }
 
 body.home {
@@ -33,6 +36,7 @@ body.home {
   z-index: -1;
 }
 
+/* home page */
 .hero {
   position: relative;
   height: 100vh;
@@ -98,6 +102,7 @@ body.home {
   padding: 0 20px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
   z-index: 1000;
+  transition: height 0.2s ease, box-shadow 0.2s ease;
 }
 
 .navbar .logo {
@@ -105,10 +110,6 @@ body.home {
   font-weight: bold;
   font-size: 20px;
   margin-right: auto;
-}
-
-.navbar:hover {
-  height: 80px;
 }
 
 .menu {
@@ -151,6 +152,17 @@ body.home {
     padding-top: 60px;
   }
 
+  body.home {
+    padding-top: 0;
+  }
+
+  .navbar {
+    height: 60px;
+  }
+  .navbar:hover {
+    height: 60px;
+  }
+
   .menu {
     display: none;
     position: absolute;
@@ -191,5 +203,13 @@ body.home {
     padding: 10px 0;
     width: 150px;
     text-align: center;
+  }
+}
+
+/* navbar only changes for hover */
+@media (hover: hover) and (pointer: fine) {
+  .navbar:hover {
+    height: 80px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
   }
 }

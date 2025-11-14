@@ -1,10 +1,11 @@
+import { useEffect } from "react";
 import { SudokuProvider, useSudoku } from "../sudoku/SudokuContext";
 import Board from "../sudoku/Board";
 import Controls from "../sudoku/Controls";
 import Timer from "../sudoku/Timer";
 import "../styles/common.css";
 import "../styles/game.css";
-import { useEffect } from "react";
+
 
 function useBodyClass(cls) {
   useEffect(() => {

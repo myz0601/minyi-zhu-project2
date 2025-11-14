@@ -4,9 +4,11 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 
 function useBodyClass(cls) {
-  useEffect(() => {
+  useEffect(function () {
     document.body.classList.add(cls);
-    return () => document.body.classList.remove(cls);
+    return function () {
+      document.body.classList.remove(cls);
+    };
   }, [cls]);
 }
 
@@ -14,15 +16,15 @@ export default function SelectionPage() {
   useBodyClass("selection");
 
   const items = [
-    { title: "Classic Sudoku",  author: "Lily",  mode: "normal" },
-    { title: "Freestyle Sudoku",author: "John",  mode: "easy"   },
-    { title: "Modern Sudoku",   author: "Alice", mode: "normal" },
-    { title: "Interest Sudoku", author: "Aiden", mode: "easy"   },
-    { title: "Fun Sudoku",      author: "David", mode: "normal" },
-    { title: "Galaxy Sudoku",   author: "Sophia",mode: "easy"   },
-    { title: "Rainbow Sudoku",  author: "Ethan", mode: "normal" },
-    { title: "Mystery Sudoku",  author: "Chloe", mode: "easy"   },
-    { title: "Samurai Sudoku",  author: "Daniel",mode: "normal" },
+    { title: "Classic Sudoku",  author: "Lily",   mode: "normal" },
+    { title: "Freestyle Sudoku",author: "John",   mode: "easy"   },
+    { title: "Modern Sudoku",   author: "Alice",  mode: "normal" },
+    { title: "Interest Sudoku", author: "Aiden",  mode: "easy"   },
+    { title: "Fun Sudoku",      author: "David",  mode: "normal" },
+    { title: "Galaxy Sudoku",   author: "Sophia", mode: "easy"   },
+    { title: "Rainbow Sudoku",  author: "Ethan",  mode: "normal" },
+    { title: "Mystery Sudoku",  author: "Chloe",  mode: "easy"   },
+    { title: "Samurai Sudoku",  author: "Daniel", mode: "normal" },
   ];
 
   return (
@@ -31,14 +33,19 @@ export default function SelectionPage() {
       <div className="container">
         <h1>Select a Game</h1>
         <ul className="game-list">
-          {items.map(it => (
-            <li key={it.title}>
-              <Link to={`/games/${it.mode}`} aria-label={`${it.title} game`}>
-                {it.title}
-              </Link>
-              <span className="author">Author: {it.author}</span>
-            </li>
-          ))}
+          {items.map(function (it) {
+            return (
+              <li key={it.title}>
+                <Link
+                  to={"/games/" + it.mode}
+                  aria-label={it.title + " game"}
+                >
+                  {it.title}
+                </Link>
+                <span className="author">Author: {it.author}</span>
+              </li>
+            );
+          })}
         </ul>
       </div>
     </>

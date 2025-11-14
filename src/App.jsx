@@ -17,8 +17,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/games" element={<SelectionPage />} />
-        <Route path="/games/easy" element={<GamePage mode="easy"/>} />
-        <Route path="/games/normal" element={<GamePage mode="normal"/>} />
+        <Route path="/games/easy" element={<GamePage mode="easy" />} />
+        <Route path="/games/normal" element={<GamePage mode="normal" />} />
         <Route path="/rules" element={<RulesPage />} />
         <Route path="/scores" element={<ScoresPage />} />
         <Route path="/login" element={<LoginPage />} />
